@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Dashboard!</h1>
+
+    <form action="/dashboard" method="POST">
+        <label for="company1">Company 1:</label>
+        <input type="text" id="company1" name="company1" required><br>
+
+        <label for="company2">Company 2:</label>
+        <input type="text" id="company2" name="company2" required><br>
+
+        <label for="company3">Company 3:</label>
+        <input type="text" id="company3" name="company3" required><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Stock Data:</h2>
+    {% if stock_data %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Date</th>
+                    <th>Open</th>
+                    <th>Close</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in stock_data %}
+                    {% if data['data'] %}
+                        {% set company_data = data['data'] %}
+                        <tr>
+                            <td colspan="4" class="company-name">{{ data['symbol'] }}</td>
+                        </tr>
+                        {% for date, info in company_data.items()|reverse %}
+                            {% if date.startswith('2023') %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ date }}</td>
+                                    <td>{{ info['1. open'] }}</td>
+                                    <td>{{ info['4. close'] }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No stock data available for {{ data['symbol'] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No stock data available.</p>
+    {% endif %}
+
+    <h2>News Data:</h2>
+    {% if news_data and news_data['articles'] %}
+        <ul>
+            {% for article in news_data['articles'] %}
+                <li>
+                    <h3>{{ article['title'] }}</h3>
+                    <p>{{ article['description'] }}</p>
+                    <p>Published At: {{ article['publishedAt'] }}</p>
+                    <p>Source: {{ article['source']['name'] }}</p>
+                    <p><a href="{{ article['url'] }}">Read More</a></p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No news data available.</p>
+    {% endif %}
+</body>
+</html>
